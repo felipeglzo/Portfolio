@@ -2,27 +2,32 @@
    SISTEMA DE DISEÑO (Variables Globales)
    ========================================== */
 :root {
-    /* Paleta de Colores */
+    /* Paleta de Colores Base */
     --bg-main: #1a1a1a;
     --bg-card: #2a2a2a;
     --bg-section: #222222;
     
+    /* Variables de Gradiente Exagerada para Pruebas */
+    --bg-dark-1: #80d15a20; /* Verde */
+    --bg-dark-2: #8d595920; /* Café/Morado */
+    --bg-dark-3: #4e50c720; /* Azul */
+
     --text-primary: #ffffff;
     --text-muted: #cccccc;
     
-    --accent-color: #ff944d;
+    --accent-color: #ff944d; /* Tu naranja Archivo */
     --accent-hover: #f3ac7d;
     
     --border-main: #444444;
     --border-light: #333333;
 
     /* Espaciados y Bordes */
-    --radius-main: 8px;
+    --radius-main: 12px;
     --transition-fast: 0.2s ease-in-out;
 }
 
 /* ==========================================
-   ESTILOS BASE
+   ESTILOS BASE (Reset y Tipografía)
    ========================================== */
 * {
     margin: 0;
@@ -33,30 +38,134 @@
 body {
     background-color: var(--bg-main);
     color: var(--text-primary);
-    font-family: sans-serif;
-    padding: 40px;
-}
-
-h1 {
-    color: var(--accent-color);
-    margin-bottom: 20px;
-}
-
-ul {
-    display: flex;
-    gap: 20px;
-    list-style: none;
-    margin-bottom: 40px;
+    font-family: 'Archivo', sans-serif;
+    font-size: 16px; /* Punto de partida global para el navegador */
+    min-height: 100vh;
 }
 
 /* ==========================================
-   GALERÍA DE PROYECTOS
+   EL CONVENIO DEL WRAPPER (Estructura Invisible)
    ========================================== */
-.projects-gallery {
-    margin-top: 60px;
+.wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 120px 24px; /* Todo el aire vertical y lateral se controla AQUÍ */
 }
 
+/* ==========================================
+   HEADER MINIMALISTA (Logo + Nombre)
+   ========================================== */
+.main-header {
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+/* Reutilizamos el alineado del wrapper para el logo */
+.main-header .wrapper {
+    padding-top: 32px;
+    padding-bottom: 32px;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-logo {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
+
+.brand-name {
+    font-size: 1.1rem; /* ~17.6px - Sutilmente jerárquico */
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    color: var(--text-primary);
+}
+
+/* ==========================================
+   SECCIONES Y RAMPA DE GRADIENTES CONTINUA
+   (Cero paddings o margins externos aquí)
+   ========================================== */
+.hero-section {
+    background: linear-gradient(90deg, var(--bg-dark-1) 0%, var(--bg-dark-2) 100%);
+    width: 100%;
+}
+
+.projects-gallery {
+    background: linear-gradient(90deg, var(--bg-dark-2) 0%, var(--bg-dark-3) 100%);
+    width: 100%;
+}
+
+.contact-section {
+    background: linear-gradient(90deg, var(--bg-dark-3) 0%, var(--bg-dark-1) 100%);
+    width: 100%;
+}
+
+/* Ajuste para que el Header no tape el contenido del Hero */
+.hero-section .wrapper {
+    padding-top: 116px; 
+}
+
+/* ELEMENTOS DE TEXTO GLOBALES */
+h1 {
+    font-size: 3rem; /* ~48px - Grande e imponente */
+    color: var(--accent-color);
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 20px;
+}
+
+p {
+    font-size: 1rem; /* 16px limpio y legible */
+    font-weight: 400;
+}
+
+/* ==========================================
+   COMPORTAMIENTO DE DOS COLUMNAS (HERO)
+   ========================================== */
+.hero-container {
+    display: flex;
+    align-items: center;        /* Centra verticalmente ambas columnas */
+    justify-content: space-between; /* Distribuye el espacio de forma proporcional */
+    gap: 40px;                  /* Distancia de seguridad entre textos y visual */
+}
+
+.hero-text {
+    flex: 1;
+    max-width: 55%;             /* Controla que las líneas de texto no se estiren de más */
+}
+
+.hero-visual {
+    flex: 1;
+    max-width: 40%;
+    display: flex;
+    justify-content: center;
+}
+
+/* Contenedor temporal para tu elemento visual, plano o render */
+.visual-placeholder {
+    width: 100%;
+    height: 350px;
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px dashed var(--border-main);
+    border-radius: var(--radius-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* ==========================================
+   GALERÍA DE PROYECTOS (Grid de Tarjetas)
+   ========================================= */
 .projects-gallery h2 {
+    font-size: 2rem; /* ~32px */
     color: var(--text-primary);
     margin-bottom: 30px;
     border-bottom: 1px solid var(--border-light);
@@ -67,11 +176,12 @@ ul {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 30px;
+    margin-top: 20px;
 }
 
 .project-card-link {
-    text-decoration: none; /* Elimina el subrayado de los enlaces */
-    display: block;        /* Hace que todo el espacio de la tarjeta sea clickeable */
+    text-decoration: none;
+    display: flex; /* Forzamos al enlace a estirarse a la altura máxima de la fila */
 }
 
 .project-card {
@@ -79,7 +189,11 @@ ul {
     padding: 30px;
     border-radius: var(--radius-main);
     border: 1px solid var(--border-main);
-    transition: transform var(--transition-fast);
+    transition: transform var(--transition-fast), border-color var(--transition-fast);
+    
+    width: 100%; /* Ocupa todo el ancho estirado del link */
+    display: flex; /* Flexbox interno para ordenar sus elementos */
+    flex-direction: column;
 }
 
 .project-card:hover {
@@ -88,11 +202,13 @@ ul {
 }
 
 .project-card h3 {
+    font-size: 1.25rem; /* ~20px */
     color: var(--accent-color);
     margin-bottom: 15px;
 }
 
 .project-card p {
+    font-size: 0.95rem; /* ~15px */
     color: var(--text-muted);
     line-height: 1.5;
 }
@@ -100,21 +216,18 @@ ul {
 /* ==========================================
    SECCIÓN DE CONTACTO
    ========================================== */
-.contact-section {
-    margin-top: 60px;
-    text-align: center;
-    padding: 40px;
-    background-color: var(--bg-section);
-    border-radius: var(--radius-main);
-    border: 1px solid var(--border-light);
+.contact-section .wrapper {
+    text-align: center; /* Centramos el contenido dentro del wrapper */
 }
 
 .contact-section h2 {
+    font-size: 2rem; /* ~32px */
     color: var(--text-primary);
     margin-bottom: 15px;
 }
 
 .contact-section p {
+    font-size: 1rem;
     color: var(--text-muted);
     margin-bottom: 30px;
 }
@@ -122,6 +235,7 @@ ul {
 .contact-btn {
     display: inline-block;
     padding: 12px 28px;
+    font-size: 1rem;
     background-color: var(--accent-color);
     color: var(--bg-main);
     text-decoration: none;
@@ -138,7 +252,9 @@ ul {
    FOOTER
    ========================================== */
 footer {
-    margin-top: 60px;
+    background-color: var(--bg-main);
     text-align: center;
+    padding: 40px 24px;
+    font-size: 0.9rem; /* ~14px */
     color: var(--text-muted);
 }
