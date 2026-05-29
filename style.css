@@ -39,6 +39,10 @@ body {
     font-family: 'Archivo', sans-serif;
     font-size: 16px; 
     min-height: 100vh;
+    
+    /* Antialiasing para forzar bordes ultra nítidos */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 /* ==========================================
