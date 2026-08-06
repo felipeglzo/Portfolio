@@ -1,25 +1,10 @@
 /* ==========================================
-   MODO DIAGNÓSTICO: PLANO ARQUITECTÓNICO
-   ========================================== */
-* {
-    outline: 1px dotted #ff8d8d4d !important; 
-}
-
-.wrapper {
-    outline: 1px dashed #ff8d8d4d !important;
-}
-
-.hero-container, .grid-container {
-    outline: 1px dotted #ff8d8d4d !important;
-}
-
-/* ==========================================
    SISTEMA DE DISEÑO (Naked / Funcional)
    ========================================== */
 :root {
     /* Mantenemos solo las variables de comportamiento UI */
     --radius-main: 8px;
-    --transition-fast: 0.2s ease-in-out;
+    --transition-fast: 0.1s ease-in-out;
 } 
 
 /* ==========================================
@@ -36,6 +21,8 @@ html {
 }
 
 body {
+    background-color: #fcfcfc; /* Fondo anti-fatiga visual */
+    color: #111111; /* Negro para alto contraste */
     font-family: 'Archivo', sans-serif;
     font-size: 16px; 
     min-height: 100vh;
@@ -45,13 +32,19 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+/* REGLA NUCLEAR: Mata el azul/morado por defecto de TODOS los enlaces */
+a, a:link, a:visited, a:hover, a:active {
+    text-decoration: none;
+    color: inherit;
+}
+
 /* ==========================================
    EL CONVENIO DEL WRAPPER
    ========================================== */
 .wrapper {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 120px 24px; 
+    padding: 80px 24px; 
 }
 
 /* ==========================================
@@ -130,6 +123,10 @@ p {
     max-width: 50%;             
 }
 
+.hero-text p {
+    line-height: 1.6; /* Aquí puedes jugar: 1.4 es más tenso, 1.8 es muy editorial */
+}
+
 .hero-visual {
     flex: 1;
     max-width: 50%;
@@ -144,6 +141,34 @@ p {
     align-items: center;
     justify-content: center;
     font-size: 0.9rem;
+}
+
+/* Formato para el nuevo elemento visual */
+.visual-element-render {
+    width: 100%;
+    height: 350px; /* La misma altura que el placeholder */
+    display: block;
+    object-fit: cover; /* Asegura que todo el diagrama técnico se vea sin recortarse */
+    border-radius: var(--radius-main);
+    
+    /* Efecto sutil para integrarlo al modo diagnóstico */
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+/* Opcional: Una animación suave al cargar */
+@keyframes fadeInSlide {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.visual-element-render {
+    animation: fadeInSlide 0.6s ease-out forwards;
 }
 
 /* ==========================================
@@ -189,6 +214,10 @@ p {
     transform: translateY(-5px);
 }
 
+.grid-container .project-card:active {
+    transform: scale(0.99);
+}
+
 /* SUBRAYADO DE EJE: Preparamos el título para la línea */
 .project-card h3 {
     font-size: 1.25rem; 
@@ -206,7 +235,7 @@ p {
     height: 1px; /* Grosor de línea de boceto */
     bottom: -2px;
     left: 0;
-    background-color: currentColor; /* Hereda el azul nativo o el morado crudo */
+    background-color: currentColor; /* Hereda el color negro */
     transform: scaleX(0); /* La línea empieza en tamaño cero */
     transform-origin: bottom right; /* Se ancla a la derecha al regresar */
     transition: transform 0.3s ease; /* Velocidad del trazo */
@@ -216,6 +245,32 @@ p {
 .project-card:hover h3::after {
     transform: scaleX(1);
     transform-origin: bottom left;
+}
+
+/* Contenedor de la foto de la tarjeta */
+.card-image-container {
+    width: 100%;
+    height: 200px; /* Altura fija para que las 3 columnas se alineen perfectamente */
+    overflow: hidden;
+    border-radius: var(--radius-main);
+    margin-bottom: 20px; /* Colchón de aire antes de que empiece el h3 */
+    border: 1px solid #1111110a; /* Línea milimétrica por si la imagen es muy blanca */
+}
+
+/* Comportamiento físico de la imagen */
+.card-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Funciona como background-size: cover; No deforma la foto */
+    display: block;
+    transition: transform var(--transition-fast);
+}
+
+/* Contenedor del texto inferior de la tarjeta (Para darle aire) */
+.card-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .project-card p {
@@ -240,8 +295,10 @@ p {
     margin-bottom: 30px;
 }
 
-/* Botón con funcionamiento de UI puro */
-.contact-btn {
+/* Botón con funcionamiento de UI puro (Especificidad alta) */
+a.contact-btn,
+a.contact-btn:link,
+a.contact-btn:visited {
     display: inline-block;
     padding: 12px 28px;
     font-size: 1rem;
@@ -249,26 +306,188 @@ p {
     text-decoration: none;
     
     /* Estado Normal: Sólido */
-    background-color: #000000;
-    color: #ffffff;
-    border: 2px solid #000000;
+    background-color: #111111;
+    color: #ffffff; /* Ahora el blanco gana obligatoriamente */
+    border: 3px solid #111111;
     border-radius: var(--radius-main);
     
     /* Animación para el hover */
     transition: all var(--transition-fast);
 }
 
-.contact-btn:hover {
+a.contact-btn:hover {
     /* Estado Hover: Outline */
     background-color: transparent;
-    color: #000000;
+    color: #111111;
+}
+
+a.contact-btn:active {
+    /* Estado Hover: Outline */
+    background-color: transparent;
+    color: #111111;
+    transform: scale(0.98);
 }
 
 /* ==========================================
    FOOTER
    ========================================== */
 footer {
+    color: #1111114f;
     text-align: center;
     padding: 40px 24px;
     font-size: 0.9rem; 
+}
+
+/* ==========================================================================
+   ESTILOS PARA LAS PÁGINAS INTERNAS DE CASOS DE ESTUDIO (DIVVY DIGITAL)
+   ========================================================================== */
+
+/* Contenedor principal del caso de estudio */
+.project-case-study {
+    padding-top: 40px;
+    padding-bottom: 80px;
+}
+
+/* Encabezado del Proyecto */
+.project-header {
+    margin-bottom: 50px;
+}
+
+.project-header h1 {
+    font-size: 3rem; /* Título grande e imponente */
+    font-weight: 800;
+    margin-bottom: 12px;
+    color: #111111;
+}
+
+.project-subtitle {
+    font-size: 1.25rem;
+    color: #666666; /* Gris sutil para el subtítulo técnico */
+    font-weight: 500;
+}
+
+/* Ficha Técnica (Role y Timeline) estilo cuadro de cota de arquitectura */
+.project-meta {
+    display: flex;
+    gap: 40px; 
+    margin-top: 30px; 
+    padding-top: 20px;
+    border-top: 1px solid #1111111a; /* Línea divisoria ultra tenue */
+}
+
+.meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px; 
+}
+
+.meta-label {
+    font-size: 0.8rem;
+    text-transform: uppercase; 
+    letter-spacing: 0.5px;
+    color: #888888; 
+    font-weight: 600;
+}
+
+.meta-value {
+    font-size: 1rem;
+    color: #111111; 
+    font-weight: 500;
+}
+
+/* El cuerpo del texto: Configurado para lectura editorial fluida */
+.project-content p {
+    font-size: 1.15rem;
+    line-height: 1.75; /* Mucho aire para que no canse el ojo al leer inglés */
+    margin-bottom: 35px;
+    max-width: 750px; /* Evita que las líneas se estiren horrible en monitores grandes */
+    color: #222222;
+}
+
+/* Contenedor de las Imágenes/Capturas */
+.project-media {
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 60px; /* Espacio generoso antes de volver a leer */
+    border-radius: var(--radius-main);
+    overflow: hidden;
+    border: 1px solid #11111110; /* Un borde casi invisible por si tu captura tiene fondo blanco */
+}
+
+.project-media img {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+/* ==========================================================================
+   TUNING DE NAVEGACIÓN PARA CASOS DE ESTUDIO
+   ========================================================================== */
+
+/* Estructura del Header en modo Split */
+.header-nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.logo-container-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Botón Back to Home */
+.back-to-home {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #666666;
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.back-to-home:hover {
+    color: #111111;
+}
+
+/* Footer interno del Proyecto (Siguiente caso) */
+.project-navigation-footer {
+    margin-top: 80px;
+    padding-bottom: 40px;
+}
+
+.project-divider {
+    border: 0;
+    height: 1px;
+    background-color: #1111111a;
+    margin-bottom: 40px;
+}
+
+.next-project-block {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.next-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888888;
+    font-weight: 600;
+}
+
+.next-project-link {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #111111;
+    text-decoration: none;
+    display: inline-block;
+    transition: transform var(--transition-fast);
+}
+
+/* Efecto sutil de desplazamiento al pasar el mouse */
+.next-project-link:hover {
+    transform: translateX(8px);
 }
