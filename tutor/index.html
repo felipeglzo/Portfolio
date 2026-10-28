@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tuteur de Français - AI</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: #0f172a; color: #f8fafc; display: flex; justify-content: center; height: 100vh; padding: 20px; }
+    .chat-container { width: 100%; max-width: 700px; background: #1e293b; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+    .chat-header { padding: 16px; background: #334155; font-size: 1.1rem; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+    .clear-btn { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
+    .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+    .message { max-width: 80%; padding: 12px 16px; border-radius: 12px; font-size: 0.95rem; line-height: 1.4; white-space: pre-wrap; }
+    .user { background: #2563eb; align-self: flex-end; border-bottom-right-radius: 2px; }
+    .bot { background: #475569; align-self: flex-start; border-bottom-left-radius: 2px; }
+    .chat-input-area { padding: 16px; background: #334155; display: flex; gap: 10px; }
+    input { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: white; outline: none; }
+    button.send-btn { background: #10b981; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+
+<div class="chat-container">
+  <div class="chat-header">
+    <span>🇫🇷 Tuteur de Français (B2)</span>
+    <button class="clear-btn" onclick="clearHistory()">Limpiar vista</button>
+  </div>
+  <div class="chat-messages" id="messages"></div>
+  <div class="chat-input-area">
+    <input type="text" id="userInput" placeholder="Écris ton message en français..." onkeydown="if(event.key==='Enter') sendMessage()">
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()">Envoyer</button>
+  </div>
+</div>
+
+<script>
+  const N8N_WEBHOOK_URL = 'http://165.227.58.60:5678/webhook/tutor-chat';
+  
+  // Generar o recuperar ID de sesión único
+  let sessionId = localStorage.getItem('tutor_session_id');
+  if (!sessionId) {
+    sessionId = 'session_' + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem('tutor_session_id', sessionId);
+  }
+
+  // Cargar historial del localStorage
+  let history = JSON.parse(localStorage.getItem('tutor_chat_history') || '[]');
+
+  function renderHistory() {
+    const container = document.getElementById('messages');
+    container.innerHTML = '';
+    history.forEach(msg => {
+      const div = document.createElement('div');
+      div.className = `message ${msg.sender}`;
+      div.textContent = msg.text;
+      container.appendChild(div);
+    });
+    container.scrollTop = container.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const input = document.getElementById('userInput');
+    const btn = document.getElementById('sendBtn');
+    const text = input.value.trim();
+    if (!text) return;
+
+    // Agregar mensaje del usuario
+    history.push({ sender: 'user', text });
+    localStorage.setItem('tutor_chat_history', JSON.stringify(history));
+    renderHistory();
+    input.value = '';
+
+    input.disabled = true;
+    btn.disabled = true;
+
+    try {
+      const response = await fetch(N8N_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chatInput: text, sessionId: sessionId })
+      });
+
+      const data = await response.json();
+      const botReply = data.output || 'Désolé, une erreur est survenue.';
+
+      // Agregar respuesta del bot
+      history.push({ sender: 'bot', text: botReply });
+      localStorage.setItem('tutor_chat_history', JSON.stringify(history));
+      renderHistory();
+    } catch (err) {
+      history.push({ sender: 'bot', text: 'Erreur de connexion avec le serveur.' });
+      renderHistory();
+    } finally {
+      input.disabled = false;
+      btn.disabled = false;
+      input.focus();
+    }
+  }
+
+  function clearHistory() {
+    if (confirm('¿Quieres borrar el historial visible? (Tu memoria en MongoDB se mantiene)')) {
+      history = [];
+      localStorage.removeItem('tutor_chat_history');
+      renderHistory();
+    }
+  }
+
+  renderHistory();
+</script>
+</body>
+</html>
